@@ -28,6 +28,7 @@ public class ControladorFuncionario {
 		return instancia;
 	}
 
+	
 	// CONSTRUTOR
 
 	private ControladorFuncionario() {

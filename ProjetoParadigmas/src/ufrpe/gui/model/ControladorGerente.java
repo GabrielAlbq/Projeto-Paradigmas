@@ -46,6 +46,7 @@ public class ControladorGerente {
 	Button btnSair;
 	@FXML
 	Label lbAdmNome;
+	
 	// CADASTRAR
 	@FXML
 	TextField tfCadFuncID;
@@ -296,6 +297,7 @@ public class ControladorGerente {
 
 	@FXML
 	private void initialize() throws NegocioException {
+		main = Principal.getInstance();
 		listarproduto();
 		listarFuncionario();
 		listarnotasfiscais();
@@ -658,7 +660,7 @@ public class ControladorGerente {
 	ObservableList<NotaFiscal> obListNF;
 	ObservableList<ItemVenda> obIVNF;
 	
-	public void listarnotasfiscais() {
+	public void listarnotasfiscais() throws NegocioException {
 		tbcNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, Integer>("codigoDaNota"));
 		tbcTotalNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, Double>("totalPagar"));
 		tbcFuncNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, String>("funcionario"));

@@ -118,6 +118,7 @@ public class ControladorEstoque {
 		repoestoque.remover(posicao);
 		//instancia.repoestoque.salvarArquivo();
 
+		
 	}
 
 	private int retornarPosicao(int codigo) {

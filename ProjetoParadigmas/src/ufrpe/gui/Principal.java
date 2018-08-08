@@ -50,7 +50,7 @@ public class Principal extends Application {
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource("views/ShowLogin.fxml"));
 			Scene scene = new Scene(root);
-			scene.getStylesheets().add("LayoutPrincipal.css");// PARA O CSS CASO FOR ADICIONAR
+		//	scene.getStylesheets().add("LayoutPrincipal.css");
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch (Exception e) {

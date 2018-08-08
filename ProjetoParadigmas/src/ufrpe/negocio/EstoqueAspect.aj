@@ -32,7 +32,7 @@ public aspect EstoqueAspect {
 		alert.setHeaderText(null);
 		alert.setContentText(e.getMessage());
 		alert.showAndWait();
-		e.printStackTrace();
+		//e.printStackTrace();
 	}
 	//SUBTRAIR PRODUTO
 	pointcut exceptionSubtrairEstoque():
@@ -75,7 +75,7 @@ public aspect EstoqueAspect {
 		alert.setHeaderText(null);
 		alert.setContentText(e.getMessage());
 		alert.showAndWait();
-		e.printStackTrace();
+		//e.printStackTrace();
 	}
 	after() returning:RemoverEstoque(){
 		salvarArquivo();
@@ -95,7 +95,7 @@ public aspect EstoqueAspect {
 		alert.setHeaderText(null);
 		alert.setContentText(e.getMessage());
 		alert.showAndWait();
-		e.printStackTrace();
+		//e.printStackTrace();
 	}
 	after() returning:AlterarEstoque(){
 		salvarArquivo();
@@ -142,7 +142,5 @@ public aspect EstoqueAspect {
 
 		}
 	}
-
-	//LOGGING
 
 }

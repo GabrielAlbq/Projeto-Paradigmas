@@ -7,8 +7,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -38,7 +36,7 @@ public class ControladorLogin {
 
 	@FXML
 	private void initialize() {
-
+		main = Principal.getInstance();
 	}
 
 	public void setMain(Principal principal) {
@@ -84,7 +82,7 @@ public class ControladorLogin {
 					root = FXMLLoader.load(getClass().getResource("/ufrpe/gui/views/Admin.fxml"));
 					root.setUserData(funcionariologado.getNome().toString());
 					Scene scene = new Scene(root);
-					scene.getStylesheets().add("Logado.css");
+					//scene.getStylesheets().add("Logado.css");
 					stage.setScene(scene);
 					stage.setTitle("Bem vindo, " + funcionariologado.getNome());
 

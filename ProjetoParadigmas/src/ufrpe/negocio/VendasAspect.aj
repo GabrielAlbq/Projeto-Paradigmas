@@ -8,6 +8,7 @@ import java.util.List;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import ufrpe.negocio.beans.ItemVenda;
+import ufrpe.negocio.beans.NotaFiscal;
 import ufrpe.negocio.exception.NegocioException;
 import ufrpe.repositorio.IRepositorioVenda;
 import ufrpe.repositorio.RepositorioVenda;
@@ -80,6 +81,16 @@ public aspect VendasAspect {
 		alert.setHeaderText(null);
 		alert.setContentText("Venda cancelada com sucesso!");
 		alert.showAndWait();
+	}
+	pointcut ListarNotasFiscais():
+		call( List<NotaFiscal> ControladorVenda.listarNotasFiscais());
+	after() throwing(NegocioException e): ListarNotasFiscais(){
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Erro!");
+		alert.setHeaderText(null);
+		alert.setContentText(e.getMessage());
+		alert.showAndWait();
+		e.printStackTrace();
 	}
 
 	public void salvarArquivo() {

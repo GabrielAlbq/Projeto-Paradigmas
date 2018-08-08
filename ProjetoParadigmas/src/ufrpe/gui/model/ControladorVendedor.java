@@ -38,6 +38,7 @@ public class ControladorVendedor {
 	@FXML
 	Label lbAdmNome;
 
+	
 	// LISTAR
 	@FXML
 	TitledPane tpListProd;
@@ -318,7 +319,7 @@ public class ControladorVendedor {
 	ObservableList<NotaFiscal> obListNF;
 	ObservableList<ItemVenda> obIVNF;
 
-	public void listarnotasfiscais() {
+	public void listarnotasfiscais() throws NegocioException {
 		tbcNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, Integer>("codigoDaNota"));
 		tbcTotalNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, Double>("totalPagar"));
 		tbcFuncNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, String>("funcionario"));

@@ -44,7 +44,10 @@ public class ControladorVenda {
 	
 	// METODOS
 
-	public List<NotaFiscal> listarNotasFiscais() {
+	public List<NotaFiscal> listarNotasFiscais() throws NegocioException {
+		if(repoVenda.listarNotasFiscais().isEmpty() == true){
+			throw new InstanciaInexistenteException("\nNao há notas fiscais!\n");
+		}
 		return repoVenda.listarNotasFiscais();
 	}
 

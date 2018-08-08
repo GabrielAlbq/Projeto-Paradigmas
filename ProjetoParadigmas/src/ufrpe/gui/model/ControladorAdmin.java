@@ -296,7 +296,7 @@ public class ControladorAdmin {
 
 	@FXML
 	private void initialize() {
-
+		main = Principal.getInstance();
 		this.cbCadFuncFun.getItems().addAll("Gerente", "Vendedor");
 
 		tpListProd.expandedProperty().addListener(new ChangeListener<Boolean>() {
@@ -327,7 +327,12 @@ public class ControladorAdmin {
 
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				listarnotasfiscais();
+				try {
+					listarnotasfiscais();
+				} catch (NegocioException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				tbvNF.refresh();
 
 			}
@@ -670,7 +675,7 @@ public class ControladorAdmin {
 	// ITENS DA NOTA FISCAL
 	ObservableList<ItemVenda> obIVNF;
 
-	public void listarnotasfiscais() {
+	public void listarnotasfiscais() throws NegocioException {
 		tbcNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, Integer>("codigoDaNota"));
 		tbcTotalNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, Double>("totalPagar"));
 		tbcFuncNF.setCellValueFactory(new PropertyValueFactory<NotaFiscal, String>("funcionario"));
@@ -697,7 +702,7 @@ public class ControladorAdmin {
 			root = (Parent) FXMLLoader.load(getClass().getResource("/ufrpe/gui/views/ShowLogin.fxml"));
 			Scene scene = new Scene(root);
 			stage = main.getPrimaryStage();
-			scene.getStylesheets().add("LayoutPrincipal.css");
+			//scene.getStylesheets().add("LayoutPrincipal.css");
 			stage.setScene(scene);
 			stage.setTitle("Sistema de Mercado");
 			main.changeStage(stage);

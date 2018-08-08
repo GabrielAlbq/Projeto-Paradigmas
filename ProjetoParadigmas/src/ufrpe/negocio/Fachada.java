@@ -59,7 +59,7 @@ public class Fachada {
 		return controladorVenda.listarItensVenda();
 	}
 
-	public List<NotaFiscal> listarVendas() {
+	public List<NotaFiscal> listarVendas() throws NegocioException {
 		return controladorVenda.listarNotasFiscais();
 	}
 
