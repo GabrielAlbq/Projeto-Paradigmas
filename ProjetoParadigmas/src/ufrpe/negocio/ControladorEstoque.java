@@ -71,17 +71,18 @@ public class ControladorEstoque {
 			throw new InstanciaRepetidaException("\nProduto de codigo(" + prod.getCodigo() + ") ja cadastrado\n");
 		}
 		repoestoque.inserir(prod);
-		instancia.repoestoque.salvarArquivo();
+	//	instancia.repoestoque.salvarArquivo();
 	}
 
-	public Produto buscar(int cod) {
+	public Produto buscar(int cod) throws InstanciaInexistenteException {
 		int posicao;
 		posicao = this.retornarPosicao(cod);
 
 		if (posicao != -1) {
 			return repoestoque.buscar(posicao);
 		}
-		return null;
+		throw new InstanciaInexistenteException(
+				"\nProduto de código "+cod+" nao existe em estoque, verifique se o codigo foi digitado corretamente!\n");
 	}
 
 	public void alterar(Produto novoProduto) throws NegocioException {
@@ -99,7 +100,7 @@ public class ControladorEstoque {
 		}
 		if (repoestoque.listar().get(posicao).getCodigo() == novoProduto.getCodigo()) {
 			repoestoque.alterar(novoProduto, posicao);
-			instancia.repoestoque.salvarArquivo();
+		//	instancia.repoestoque.salvarArquivo();
 		}
 	}
 
@@ -115,7 +116,7 @@ public class ControladorEstoque {
 			throw new InstanciaInexistenteException("\nNao ha produto de codigo (" + cod + ") para remover\n");
 		}
 		repoestoque.remover(posicao);
-		instancia.repoestoque.salvarArquivo();
+		//instancia.repoestoque.salvarArquivo();
 
 	}
 

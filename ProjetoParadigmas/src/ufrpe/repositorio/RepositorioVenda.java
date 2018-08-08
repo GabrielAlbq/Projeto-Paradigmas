@@ -128,25 +128,25 @@ public class RepositorioVenda implements IRepositorioVenda, Serializable {
 
 	@Override
 	public void salvarArquivo() {
-		if (!(instancia == null)) {
-			File salvar = new File("RepositorioVenda.dat");
-			try {
-				if (!salvar.exists()) {
-					salvar.createNewFile();
-				}
-
-				FileOutputStream fos = new FileOutputStream(salvar);
-				ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-				oos.writeObject(instancia);
-				oos.flush();
-				oos.close();
-				fos.flush();
-				fos.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
+//		if (!(instancia == null)) {
+//			File salvar = new File("RepositorioVenda.dat");
+//			try {
+//				if (!salvar.exists()) {
+//					salvar.createNewFile();
+//				}
+//
+//				FileOutputStream fos = new FileOutputStream(salvar);
+//				ObjectOutputStream oos = new ObjectOutputStream(fos);
+//
+//				oos.writeObject(instancia);
+//				oos.flush();
+//				oos.close();
+//				fos.flush();
+//				fos.close();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//
+//		}
 	}
 }

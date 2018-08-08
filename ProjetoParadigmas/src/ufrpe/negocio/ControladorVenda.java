@@ -84,11 +84,9 @@ public class ControladorVenda {
 			throw new InstanciaInexistenteException("\nNao ha item de codigo (" + cod + ") para remover\n");
 		}
 		repoVenda.removerItemVenda(posicao);
-
 	}
 
 	private int retornarPosicao(int codigo) {
-
 		if (codigo <= 0) {
 			return -1;
 		}
@@ -116,9 +114,9 @@ public class ControladorVenda {
 	}
 
 	public void gerarNotaFiscal(Funcionario funcionario) {
-		NotaFiscal teste = new NotaFiscal(funcionario, repoVenda.getItensvenda(), totalPagar, contadorCodigoNota,
+		NotaFiscal nf = new NotaFiscal(funcionario, repoVenda.getItensvenda(), totalPagar, contadorCodigoNota,
 				repoVenda.listar().size());
-		repoVenda.adicionarNotaFiscal(teste);
+		repoVenda.adicionarNotaFiscal(nf);
 		repoVenda.listar().clear();
 		this.totalPagar = 0;
 		instancia.repoVenda.salvarArquivo();

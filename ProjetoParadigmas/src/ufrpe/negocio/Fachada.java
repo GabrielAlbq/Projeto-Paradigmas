@@ -7,6 +7,7 @@ import ufrpe.negocio.beans.ItemVenda;
 import ufrpe.negocio.beans.Login;
 import ufrpe.negocio.beans.NotaFiscal;
 import ufrpe.negocio.beans.Produto;
+import ufrpe.negocio.exception.InstanciaInexistenteException;
 import ufrpe.negocio.exception.NegocioException;
 
 public class Fachada {
@@ -92,7 +93,7 @@ public class Fachada {
 		controladorEstoque.remover(indentificacao);
 	}
 
-	public Produto buscarProduto(int codigo) {
+	public Produto buscarProduto(int codigo) throws InstanciaInexistenteException {
 		return controladorEstoque.buscar(codigo);
 	}
 
@@ -114,7 +115,7 @@ public class Fachada {
 		controladorFuncionario.remover(identificacao);
 	}
 
-	public Funcionario buscarFuncionario(int identificacao) {
+	public Funcionario buscarFuncionario(int identificacao) throws NegocioException {
 		return controladorFuncionario.buscar(identificacao);
 	}
 

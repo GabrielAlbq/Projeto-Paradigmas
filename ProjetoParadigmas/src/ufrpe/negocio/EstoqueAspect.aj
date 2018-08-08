@@ -1,15 +1,29 @@
 package ufrpe.negocio;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import ufrpe.negocio.beans.Produto;
-import ufrpe.negocio.exception.IdentificacaoInvalidaException;
 import ufrpe.negocio.exception.NegocioException;
+import ufrpe.repositorio.IRepositorioEstoque;
+import ufrpe.repositorio.RepositorioEstoque;
 
 public aspect EstoqueAspect {
 	
+	 private IRepositorioEstoque repoestoque = RepositorioEstoque.getInstancia();
+
+//	 pointcut RepoEstoqueInstancia():
+//		 call(RepositorioEstoque getInstancia());
+//	 after() returning():RepoEstoqueInstancia(){
+//		 
+//	 }
+	 
+	//EXCECOES E CONFIRMACOES DE PROCEDIMENTO ESTOQUE
+	//LISTAR
 	pointcut exceptionListarEstoque() :
 		call(List<Produto> ControladorEstoque.listarProduto());
 	after() throwing(NegocioException e): exceptionListarEstoque(){
@@ -20,6 +34,7 @@ public aspect EstoqueAspect {
 		alert.showAndWait();
 		e.printStackTrace();
 	}
+	//SUBTRAIR PRODUTO
 	pointcut exceptionSubtrairEstoque():
 		call(void ControladorEstoque.subtrairProduto(*,*));
 	after() throwing(NegocioException e): exceptionSubtrairEstoque(){
@@ -30,77 +45,104 @@ public aspect EstoqueAspect {
 		alert.showAndWait();
 		e.printStackTrace();
 	}
-	pointcut exceptionInserirEstoque():
+	
+	//INSERIR
+	pointcut InserirEstoque():
 		call(void ControladorEstoque.inserir(*));
-	after() throwing(RuntimeException re): exceptionInserirEstoque(){
+	after() throwing(Throwable e): InserirEstoque(){
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Erro ao cadastrar!");
 		alert.setHeaderText(null);
-		alert.setContentText(re.getMessage());
+		alert.setContentText(e.getMessage());
 		alert.showAndWait();
-		re.printStackTrace();
+		e.printStackTrace();
+	}
+	after() returning:InserirEstoque(){
+		salvarArquivo(); //TODO: VERIFICAR SE ESTÁ SALVANDO
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Confirmacao de adicao");
+		alert.setHeaderText(null);
+		alert.setContentText("Produto adicionado com sucesso!");
+		alert.showAndWait();
 	}
 	
-	//@after(args) throwing() : pointcut_expression {}
-//	pointcut exceptionEstoque2():
-//		call(void ufrpe.gui.model.ControladorAdmin.listarProduto());
-//	after(): exceptionEstoque2(){
-//		System.out.println("exception");
-//	}
-	
-//	pointcut excepEstoque(List<Produto> produtos): 
-//		call(List<Produto> ControladorEstoque.listarProduto()) && args (produtos);
-//	before(List<Produto> produtos) throws InstanciaInexistenteException: excepEstoque(produtos){
-//		if(produtos.isEmpty() == true){
-//			throw new InstanciaInexistenteException("\nNao ha produtos cadastrados!\n");
-//		}
-//	}
-//	pointcut excepEstoque(List<Produto> produtos):
-//		call(List<Produto> RepositorioEstoque.listar()) && args (produtos);
-//	before(List<Produto> produtos): excepEstoque(produtos){
-//		if(produtos.isEmpty() == true){
-//			
-//		}
-//	}
-//	pointcut exceptionEstoque(List<Produto> produtos):
-//		call(List<Produto> ControladorEstoque.listarProduto()) && args (produtos);
-//	before(List<Produto> produtos ): set(List<Produto> ControladorEstoque.listaProduto()) && args(produtos) exceptionEstoque(produtos){
-//		
-//	}
-	pointcut exceptEstoque(Produto prod):
-		call(void ControladorEstoque.inserir(*)) && args(prod);
-	before(Produto prod) throws NegocioException: exceptEstoque(prod){
-		if(prod == null){
-			throw new RuntimeException("\nInstancia de Produto nula\n");
-//			Alert alert = new Alert(AlertType.ERROR);
-//			alert.setTitle("Erro ao cadastrar!");
-//			alert.setHeaderText(null);
-//			//alert.setContentText(e.getMessage());
-//			alert.showAndWait();
-//			//e.printStackTrace();
-		}
-		if (prod.getNome().isEmpty() == true) {
-			throw new RuntimeException("\nString do Nome do Produto nula, adicione um nome!\n");
-		}
-		if (prod.getCodigo() <= 0) {
-			throw new IdentificacaoInvalidaException("\nCodigo (" + prod.getCodigo() + ") invalido\n");
-		}
-//		if (retornarPosicao(prod.getCodigo()) != -1) {
-//			throw new InstanciaRepetidaException("\nProduto de codigo(" + prod.getCodigo() + ") ja cadastrado\n");
-//		}
+	//REMOVER, EXCECAO E CONFIRMACAO
+	pointcut RemoverEstoque():
+		call(void ControladorEstoque.remover(*));
+	after() throwing(NegocioException e): RemoverEstoque(){
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Erro ao remover!");
+		alert.setHeaderText(null);
+		alert.setContentText(e.getMessage());
+		alert.showAndWait();
+		e.printStackTrace();
 	}
-//	
-//	public Alert alerta(){
-//		after
-		//Alert alert = new Alert(AlertType.ERROR);
-//		alert.setTitle("Erro ao cadastrar!");
-//		alert.setHeaderText(null);
-//		//alert.setContentText(e.getMessage());
-//		alert.showAndWait();
-//		//e.printStackTrace();
-	//}
+	after() returning:RemoverEstoque(){
+		salvarArquivo();
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Confirmacao de remocao");
+		alert.setHeaderText(null);
+		alert.setContentText("Produto removido com sucesso!");
+		alert.showAndWait();
+	}
 	
+	//ALTERAR
+	pointcut AlterarEstoque():
+		call(void ControladorEstoque.alterar(*));
+	after() throwing(NegocioException e):AlterarEstoque(){
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Erro ao alterar!");
+		alert.setHeaderText(null);
+		alert.setContentText(e.getMessage());
+		alert.showAndWait();
+		e.printStackTrace();
+	}
+	after() returning:AlterarEstoque(){
+		salvarArquivo();
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Produto alterado");
+		alert.setHeaderText(null);
+		alert.setContentText("Produto alterado com sucesso!");
+		alert.showAndWait();
+	}
+
+	//BUSCAR
+	pointcut BuscarEstoque():
+		call(Produto ControladorEstoque.buscar(*));
+	after() throwing(NegocioException e): BuscarEstoque(){
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Produto nao encontrado");
+		alert.setHeaderText(null);
+		alert.setContentText(e.getMessage());
+		alert.showAndWait();
+	}
+
+	//PERSISTENCIA
+
 	
-	
-	
+	public void salvarArquivo() {
+		if (!(repoestoque == null)) {
+			File salvar = new File("RepositorioEstoque.dat");
+			try {
+				if (!salvar.exists()) {
+					salvar.createNewFile();
+				}
+
+				FileOutputStream fos = new FileOutputStream(salvar);
+				ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+				oos.writeObject(repoestoque);
+				oos.flush();
+				oos.close();
+				fos.flush();
+				fos.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+	//LOGGING
+
 }

@@ -45,7 +45,7 @@ public class ControladorLogin {
 		this.main = principal;
 	}
 
-	public void FazerLogin(ActionEvent event) {
+	public void FazerLogin(ActionEvent event) throws NegocioException {
 
 		Stage stage = new Stage();
 		Parent root = null;
@@ -92,13 +92,6 @@ public class ControladorLogin {
 					main.changeStage(stage);
 				}
 			}
-		} catch (NegocioException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Falha de Login");
-			alert.setHeaderText(null);
-			alert.setContentText(e.getMessage());
-			alert.showAndWait();
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -53,7 +53,7 @@ public class ControladorFuncionario {
 					"\nNome de usuario(" + funcInserir.getLogin().getUser() + ") ja esta cadastrado!\n");
 		}
 		repoFuncionario.inserir(funcInserir);
-		instancia.repoFuncionario.salvarArquivo();
+		//instancia.repoFuncionario.salvarArquivo();
 	}
 
 	public void remover(int identificacao) throws NegocioException {
@@ -68,7 +68,7 @@ public class ControladorFuncionario {
 			throw new InstanciaInexistenteException("\nFuncionario nao exite!\n");
 		}
 		((RepositorioFuncionario) repoFuncionario).remover(checagem);
-		instancia.repoFuncionario.salvarArquivo();
+		//instancia.repoFuncionario.salvarArquivo();
 	}
 
 	public void alterar(Funcionario funcionarioAlterar) throws NegocioException {
@@ -84,17 +84,17 @@ public class ControladorFuncionario {
 			throw new InstanciaInexistenteException("\nFuncionario nao exite!\n");
 		}
 		repoFuncionario.alterar(funcionarioAlterar, checagem);
-		instancia.repoFuncionario.salvarArquivo();
+		//instancia.repoFuncionario.salvarArquivo();
 	}
 
-	public Funcionario buscar(int identificacao) {
+	public Funcionario buscar(int identificacao) throws NegocioException {
 		int posicao;
 		posicao = this.retornaPosicao(identificacao);
 
 		if (posicao != -1) {
 			return repoFuncionario.buscar(posicao);
 		}
-		return null;
+		throw new InstanciaInexistenteException("\nFuncionario de identificação: "+identificacao+" nao exite, verifique se digitou a identificação correta!\n");
 	}
 
 	public int retornaPosicao(int identificacao) {

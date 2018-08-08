@@ -11,8 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -200,7 +198,7 @@ public class ControladorVendedor {
 	TableView<ItemVenda> tbvIVNF;
 
 	@FXML
-	private void initialize() {
+	private void initialize() throws NegocioException {
 		listarproduto();
 		listarnotasfiscais();
 
@@ -220,179 +218,99 @@ public class ControladorVendedor {
 		});
 
 		tbvNF.getSelectionModel().selectedItemProperty()
-				.addListener((observable, oldValue, newValue) -> selecionarNotaFiscalTableView(newValue));
+		.addListener((observable, oldValue, newValue) -> selecionarNotaFiscalTableView(newValue));
 
 	}
 
 	// METODOS PARA PRODUTOS
 	private ObservableList<Produto> obListProd;
 
-	public void listarproduto() {
-		try {
-			tbcProdCod.setCellValueFactory(new PropertyValueFactory<Produto, Integer>("codigo"));
-			tbcProdNome.setCellValueFactory(new PropertyValueFactory<Produto, String>("nome"));
-			tbcProdPrec.setCellValueFactory(new PropertyValueFactory<Produto, Double>("preco"));
-			tbcProdQtd.setCellValueFactory(new PropertyValueFactory<Produto, Integer>("quantidade"));
-
-			obListProd = FXCollections.observableArrayList(fachada.listarProdutos());
-			tbvListaProd.setItems(obListProd);
-		} catch (NegocioException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Erro ao listar!");
-			alert.setHeaderText(null);
-			alert.setContentText(e.getMessage());
-			alert.showAndWait();
-			e.printStackTrace();
-		}
+	public void listarproduto() throws NegocioException {
+		tbcProdCod.setCellValueFactory(new PropertyValueFactory<Produto, Integer>("codigo"));
+		tbcProdNome.setCellValueFactory(new PropertyValueFactory<Produto, String>("nome"));
+		tbcProdPrec.setCellValueFactory(new PropertyValueFactory<Produto, Double>("preco"));
+		tbcProdQtd.setCellValueFactory(new PropertyValueFactory<Produto, Integer>("quantidade"));
+		obListProd = FXCollections.observableArrayList(fachada.listarProdutos());
+		tbvListaProd.setItems(obListProd);	
 	}
 
-	public void buscarproduto(ActionEvent event) {
+	public void buscarproduto(ActionEvent event) throws NegocioException {
 		int codigo = Integer.parseInt(tfBuscProdCod.getText().toString());
 		this.p = fachada.buscarProduto(codigo);
-		if (p != null) {
-			tfBuscProdNome.setText(p.getNome());
-			tfBuscProdPrec.setText(String.valueOf(p.getPreco()));
-			tfBuscProdQtd.setText(String.valueOf(p.getQuantidade()));
-		} else {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Produto nao encontrado");
-			alert.setHeaderText(null);
-			alert.setContentText("Produto nao existe em estoque, verifique se o codigo foi digitado corretamente!");
-			alert.showAndWait();
-		}
+		tfBuscProdNome.setText(p.getNome());
+		tfBuscProdPrec.setText(String.valueOf(p.getPreco()));
+		tfBuscProdQtd.setText(String.valueOf(p.getQuantidade()));
+
 	}
 
 	// METODOS PARA VENDAS
 	ObservableList<ItemVenda> obListVenda;
 	double totalapagar = 0;
 
-	public void confirmacaofuncionario(ActionEvent event) {
-		try {
-			int identificacao;
-			if (tfBuscFunVenda.getText().toString().isEmpty() == false) {
-				identificacao = Integer.parseInt(tfBuscFunVenda.getText().toString());
-				this.f = fachada.buscarFuncionario(identificacao);
-
-				if (f != null) {
-					tfBuscFunVenda.setEditable(false);
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Funcionario encontrado!");
-					alert.setHeaderText(null);
-					alert.setContentText("Funcionário encontrado");
-					alert.showAndWait();
-				} else {
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Funcionario não encontrado!");
-					alert.setHeaderText(null);
-					alert.setContentText(
-							"Funcionário não encontrado, verifique se você digitou a identificação correta");
-					alert.showAndWait();
-				}
-			}
-		} catch (NumberFormatException ne) {
-			ne.printStackTrace();
+	public void confirmacaofuncionario(ActionEvent event) throws NegocioException {
+		int identificacao;
+		if (tfBuscFunVenda.getText().toString().isEmpty() == false) {
+			identificacao = Integer.parseInt(tfBuscFunVenda.getText().toString());
+			this.f = fachada.buscarFuncionario(identificacao);
+			tfBuscFunVenda.setEditable(false);				
 		}
 	}
 
-	public void finalizarvenda(ActionEvent event) {
-		try {
-			tfTotalPagar.setText(String.valueOf(totalapagar));
-			fachada.encerrarPedido();
-			fachada.gerarNotaFiscal(f);
-			totalapagar = 0;
-			tfBuscFunVenda.setEditable(true);
-			tfBuscProdCodV.clear();
-			tfBuscProdQtdV.clear();
+	public void finalizarvenda(ActionEvent event) throws NegocioException {
+
+		tfTotalPagar.setText(String.valueOf(totalapagar));
+		fachada.encerrarPedido();
+		fachada.gerarNotaFiscal(f);
+		totalapagar = 0;
+		tfBuscFunVenda.setEditable(true);
+		tfBuscProdCodV.clear();
+		tfBuscProdQtdV.clear();
 		//	tfTotalPagar.clear();
+		tbvListaItemV.refresh();		
+	}
+
+	public void inseriritem(ActionEvent event) throws NegocioException {
+
+		int codigo = Integer.parseInt(tfBuscProdCodV.getText().toString());
+		Produto p = fachada.buscarProduto(codigo);
+		if (p != null) {
+			int quantidade = Integer.parseInt(tfBuscProdQtdV.getText().toString());
+			ItemVenda item = new ItemVenda(p, quantidade);
+			fachada.inserirItem(item);
+			listaritensvenda();
 			tbvListaItemV.refresh();
-			Alert alert = new Alert(AlertType.CONFIRMATION);
-			alert.setTitle("Nota fiscal gerada");
-			alert.setHeaderText(null);
-			alert.setContentText("Nota fiscal gerada com sucesso!");
-			alert.showAndWait();
-		} catch (NegocioException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Erro!");
-			alert.setHeaderText(null);
-			alert.setContentText(e.getMessage());
-			alert.showAndWait();
-			e.printStackTrace();
+			totalapagar += item.getValort();
+			tfTotalPagar.setText(String.valueOf(totalapagar));
 		}
 	}
 
-	public void inseriritem(ActionEvent event) {
+	public void removerItem(ActionEvent event) throws NegocioException {
 
 		int codigo = Integer.parseInt(tfBuscProdCodV.getText().toString());
 		Produto p = fachada.buscarProduto(codigo);
 		if (p != null) {
 			int quantidade = Integer.parseInt(tfBuscProdQtdV.getText().toString());
 			ItemVenda item = new ItemVenda(p, quantidade);
-			try {
-				fachada.inserirItem(item);
-				listaritensvenda();
-				tbvListaItemV.refresh();
-				totalapagar += item.getValort();
-				tfTotalPagar.setText(String.valueOf(totalapagar));
-			} catch (NegocioException e) {
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Erro!");
-				alert.setHeaderText(null);
-				alert.setContentText(e.getMessage());
-				alert.showAndWait();
-				e.printStackTrace();
-			}
+			fachada.remover(item.getCodigo());
+			listaritensvenda();
+			tbvListaItemV.refresh();
+			totalapagar -= item.getValort();		
 		}
 	}
 
-	public void removerItem(ActionEvent event) {
+	public void listaritensvenda() throws NegocioException {
+		tbcItemVNome.setCellValueFactory(new PropertyValueFactory<ItemVenda, String>("nome"));
+		tbcItemVPreco.setCellValueFactory(new PropertyValueFactory<ItemVenda, Double>("preco"));
+		tbcItemVQtd.setCellValueFactory(new PropertyValueFactory<ItemVenda, Integer>("qtd"));
+		tbcItemVTotal.setCellValueFactory(new PropertyValueFactory<ItemVenda, Double>("valort"));
 
-		int codigo = Integer.parseInt(tfBuscProdCodV.getText().toString());
-		Produto p = fachada.buscarProduto(codigo);
-		if (p != null) {
-			int quantidade = Integer.parseInt(tfBuscProdQtdV.getText().toString());
-			ItemVenda item = new ItemVenda(p, quantidade);
-			try {
-				fachada.remover(item.getCodigo());
-				listaritensvenda();
-				tbvListaItemV.refresh();
-				totalapagar -= item.getValort();
-			} catch (NegocioException e) {
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Erro!");
-				alert.setHeaderText(null);
-				alert.setContentText(e.getMessage());
-				alert.showAndWait();
-				e.printStackTrace();
-			}
-		}
-	}
+		obListVenda = FXCollections.observableArrayList(fachada.listarItensVenda());
+		tbvListaItemV.setItems(obListVenda);
 
-	public void listaritensvenda() {
-		try {
-			tbcItemVNome.setCellValueFactory(new PropertyValueFactory<ItemVenda, String>("nome"));
-			tbcItemVPreco.setCellValueFactory(new PropertyValueFactory<ItemVenda, Double>("preco"));
-			tbcItemVQtd.setCellValueFactory(new PropertyValueFactory<ItemVenda, Integer>("qtd"));
-			tbcItemVTotal.setCellValueFactory(new PropertyValueFactory<ItemVenda, Double>("valort"));
-
-			obListVenda = FXCollections.observableArrayList(fachada.listarItensVenda());
-			tbvListaItemV.setItems(obListVenda);
-		} catch (NegocioException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Erro!");
-			alert.setHeaderText(null);
-			alert.setContentText(e.getMessage());
-			alert.showAndWait();
-			e.printStackTrace();
-		}
 	}
 
 	public void cancelarvenda() {
 		fachada.cancelarPedido();
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Venda cancelada");
-		alert.setHeaderText(null);
-		alert.setContentText("Venda cancelada com sucesso!");
-		alert.showAndWait();
 		tbvListaItemV.refresh();
 	}
 
@@ -410,13 +328,13 @@ public class ControladorVendedor {
 
 	public void selecionarNotaFiscalTableView(NotaFiscal nf) {
 
-			tbcNFItemNome.setCellValueFactory(new PropertyValueFactory<ItemVenda, String>("nome"));
-			tbcNFItemQtd.setCellValueFactory(new PropertyValueFactory<ItemVenda, Integer>("qtd"));
-			tbcNFItemPreco.setCellValueFactory(new PropertyValueFactory<ItemVenda, Double>("preco"));
-			tbcNFItemTotal.setCellValueFactory(new PropertyValueFactory<ItemVenda, Double>("valort"));
-			obIVNF = FXCollections.observableArrayList(nf.getItensVendidos());
-			tbvIVNF.setItems(obIVNF);
-	
+		tbcNFItemNome.setCellValueFactory(new PropertyValueFactory<ItemVenda, String>("nome"));
+		tbcNFItemQtd.setCellValueFactory(new PropertyValueFactory<ItemVenda, Integer>("qtd"));
+		tbcNFItemPreco.setCellValueFactory(new PropertyValueFactory<ItemVenda, Double>("preco"));
+		tbcNFItemTotal.setCellValueFactory(new PropertyValueFactory<ItemVenda, Double>("valort"));
+		obIVNF = FXCollections.observableArrayList(nf.getItensVendidos());
+		tbvIVNF.setItems(obIVNF);
+
 	}
 
 	// DESLOGAR

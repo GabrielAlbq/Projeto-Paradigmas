@@ -118,26 +118,26 @@ public class RepositorioFuncionario implements IRepositorioFuncionario, Serializ
 
 	@Override
 	public void salvarArquivo() {
-		if (!(instancia == null)) {
-			File salvar = new File("RepositorioFuncionario.dat");
-			try {
-				if (!salvar.exists()) {
-					salvar.createNewFile();
-				}
-
-				FileOutputStream fos = new FileOutputStream(salvar);
-				ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-				oos.writeObject(instancia);
-				oos.flush();
-				oos.close();
-				fos.flush();
-				fos.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
+//		if (!(instancia == null)) {
+//			File salvar = new File("RepositorioFuncionario.dat");
+//			try {
+//				if (!salvar.exists()) {
+//					salvar.createNewFile();
+//				}
+//
+//				FileOutputStream fos = new FileOutputStream(salvar);
+//				ObjectOutputStream oos = new ObjectOutputStream(fos);
+//
+//				oos.writeObject(instancia);
+//				oos.flush();
+//				oos.close();
+//				fos.flush();
+//				fos.close();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//
+//		}
 	}
 
 	public void alterarLogin(Login log, int posicao) {
